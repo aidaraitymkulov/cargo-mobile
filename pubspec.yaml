@@ -45,6 +45,9 @@ dependencies:
   # Разрешения (уведомления, камера)
   permission_handler: ^11.3.0
 
+  # Splash screen
+  flutter_native_splash: ^2.4.0
+
   # Immutable модели
   freezed_annotation: ^2.4.0
   json_annotation: ^4.9.0
@@ -63,3 +66,18 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+
+flutter_native_splash:
+  color: "#1B5E20"
+  image: assets/icons/logo.png
+  color_dark: "#1B5E20"
+  image_dark: assets/icons/logo.png
+  android_12:
+    color: "#1B5E20"
+    image: assets/icons/logo.png
+    color_dark: "#1B5E20"
+    image_dark: assets/icons/logo.png

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cargo_mobile/features/auth/domain/auth_provider.dart';
+import 'package:cargo_mobile/features/auth/presentation/login_screen.dart';
+import 'package:cargo_mobile/features/auth/presentation/register_screen.dart';
+import 'package:cargo_mobile/features/auth/presentation/confirm_email_screen.dart';
+import 'package:cargo_mobile/features/auth/presentation/forgot_password_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authNotifier = ref.watch(_authListenableProvider);
+  final authListenable = ref.watch(_authListenableProvider);
 
   return GoRouter(
-    refreshListenable: authNotifier,
+    refreshListenable: authListenable,
     redirect: (context, state) {
-      final isLoggedIn = authNotifier.isLoggedIn;
+      final isLoggedIn = authListenable.isLoggedIn;
       final isAuthRoute = state.matchedLocation.startsWith('/auth');
 
       if (!isLoggedIn && !isAuthRoute) return '/auth/login';
@@ -18,19 +23,19 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/auth/login',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const LoginScreen(),
       ),
       GoRoute(
         path: '/auth/register',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const RegisterScreen(),
       ),
       GoRoute(
         path: '/auth/confirm-email',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const ConfirmEmailScreen(),
       ),
       GoRoute(
         path: '/auth/forgot-password',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const ForgotPasswordScreen(),
       ),
       ShellRoute(
         builder: (_, _, child) => Scaffold(body: child),
@@ -90,7 +95,11 @@ final routerProvider = Provider<GoRouter>((ref) {
 });
 
 final _authListenableProvider = Provider<_AuthListenable>((ref) {
-  return _AuthListenable();
+  final notifier = _AuthListenable();
+  ref.listen(authProvider, (_, next) {
+    notifier.setLoggedIn(next.isLoggedIn);
+  });
+  return notifier;
 });
 
 class _AuthListenable extends ChangeNotifier {
@@ -99,6 +108,7 @@ class _AuthListenable extends ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
 
   void setLoggedIn(bool value) {
+    if (_isLoggedIn == value) return;
     _isLoggedIn = value;
     notifyListeners();
   }

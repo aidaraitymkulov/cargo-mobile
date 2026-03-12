@@ -1,8 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
 abstract class AppConstants {
-  static const String baseUrl = 'https://api.cargo-app.com';
-  static const String wsUrl = 'wss://api.cargo-app.com/ws/chat';
+  static const String baseUrl = String.fromEnvironment('BASE_URL');
+  static const String wsUrl = String.fromEnvironment('WS_URL');
 
   static const int defaultPageSize = 20;
   static const int chatPageSize = 50;
@@ -21,8 +21,8 @@ enum OrderStatus {
 }
 
 enum UserStatus {
-  @JsonValue(0) active,
-  @JsonValue(1) inactive,
-  @JsonValue(2) deleted,
-  @JsonValue(3) pendingDeletion,
+  @JsonValue('ACTIVE') active,
+  @JsonValue('INACTIVE') inactive,
+  @JsonValue('DELETED') deleted,
+  @JsonValue('PENDING_DELETION') pendingDeletion,
 }
