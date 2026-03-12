@@ -1,0 +1,65 @@
+name: cargo_mobile
+description: "Cargo mobile application"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Навигация
+  go_router: ^14.0.0
+
+  # Стейт-менеджмент
+  flutter_riverpod: ^2.6.0
+  riverpod_annotation: ^2.6.0
+
+  # HTTP
+  dio: ^5.7.0
+
+  # Безопасное хранилище токенов
+  flutter_secure_storage: ^9.2.0
+
+  # WebSocket + STOMP (чат)
+  stomp_dart_client: ^3.0.1
+
+  # Push-уведомления
+  firebase_core: ^3.0.0
+  firebase_messaging: ^15.0.0
+
+  # Кэш картинок
+  cached_network_image: ^3.4.0
+
+  # Форматирование дат
+  intl: ^0.20.0
+
+  # Бесконечная прокрутка
+  infinite_scroll_pagination: ^4.0.0
+
+  # Разрешения (уведомления, камера)
+  permission_handler: ^11.3.0
+
+  # Immutable модели
+  freezed_annotation: ^2.4.0
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+  # Кодогенерация
+  build_runner: ^2.4.0
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.6.0
+  freezed: ^2.5.0
+
+flutter:
+  uses-material-design: true
