@@ -12,7 +12,6 @@
 | WebSocket (чат) | stomp_dart_client |
 | Push-уведомления | firebase_messaging (FCM) |
 | Кэш изображений | cached_network_image |
-| Локальный кэш данных | Hive |
 | Бесконечная прокрутка | infinite_scroll_pagination |
 | Модели | freezed + json_serializable |
 | Кодогенерация | build_runner |
@@ -317,7 +316,7 @@ class ChatSocket {
   void connect(String token, Function(ChatMessage) onMessage) {
     _client = StompClient(
       config: StompConfig(
-        url: 'ws://api.adesexpress.com/ws/chat?token=$token',
+        url: 'ws://api.cargo-app.com/ws/chat?token=$token',
         onConnect: (frame) {
           _client.subscribe(
             destination: '/user/queue/messages',
