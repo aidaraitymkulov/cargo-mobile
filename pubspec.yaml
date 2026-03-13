@@ -72,12 +72,12 @@ flutter:
     - assets/icons/
 
 flutter_native_splash:
-  color: "#1B5E20"
+  background_image: assets/images/splash_bg.png
   image: assets/icons/logo.png
-  color_dark: "#1B5E20"
+  background_image_dark: assets/images/splash_bg.png
   image_dark: assets/icons/logo.png
   android_12:
-    color: "#1B5E20"
-    image: assets/icons/logo.png
-    color_dark: "#1B5E20"
-    image_dark: assets/icons/logo.png
+    background_image: assets/images/splash_bg.png
+    image: assets/icons/logo_square.png
+    background_image_dark: assets/images/splash_bg.png
+    image_dark: assets/icons/logo_square.png

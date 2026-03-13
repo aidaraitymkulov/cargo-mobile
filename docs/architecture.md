@@ -316,7 +316,7 @@ class ChatSocket {
   void connect(String token, Function(ChatMessage) onMessage) {
     _client = StompClient(
       config: StompConfig(
-        url: 'ws://api.cargo-app.com/ws/chat?token=$token',
+        url: 'ws://api.adesexpress.com/ws/chat?token=$token',
         onConnect: (frame) {
           _client.subscribe(
             destination: '/user/queue/messages',
@@ -421,7 +421,7 @@ _pagingController.addPageRequestListener((page) async {
 
 | Состояние | Поведение в приложении |
 |---|---|
-| `status = 0 (ACTIVE)` | Полный доступ |
-| `status = 1 (INACTIVE)` | 403 при логине → показываем сообщение |
-| `status = 3 (PENDING_DELETION)` | Баннер с датой удаления + кнопка отмены |
-| `chat_banned = true` | Чат открыт, поле ввода заблокировано |
+| `status = "ACTIVE"` | Полный доступ |
+| `status = "INACTIVE"` | 403 при логине → показываем сообщение |
+| `status = "PENDING_DELETION"` | Баннер с датой удаления + кнопка отмены |
+| `chatBanned = true` | Чат открыт, поле ввода заблокировано |

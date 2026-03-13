@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cargo_mobile/core/theme/app_theme.dart';
 
-class AuthScaffold extends StatelessWidget {
+class AppScaffold extends StatelessWidget {
   final Widget child;
   final String? title;
   final bool showBackButton;
 
-  const AuthScaffold({
+  const AppScaffold({
     super.key,
     required this.child,
     this.title,
@@ -27,27 +28,22 @@ class AuthScaffold extends StatelessWidget {
             )
           : null,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF1B5E20),
-              Color(0xFF2E7D32),
-              Color(0xFF43A047),
-            ],
-          ),
+        width: double.infinity,
+        height: double.infinity,
+        decoration: AppTheme.backgroundDecoration,
+        child: SafeArea(
+          bottom: false,
+          child: child,
         ),
-        child: SafeArea(child: child),
       ),
     );
   }
 }
 
-class AuthCard extends StatelessWidget {
+class AppCard extends StatelessWidget {
   final Widget child;
 
-  const AuthCard({super.key, required this.child});
+  const AppCard({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +54,7 @@ class AuthCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),

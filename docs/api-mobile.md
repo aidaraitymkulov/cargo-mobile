@@ -1,10 +1,10 @@
 # Mobile API (Flutter)
 
-Base URL: `https://api.cargo-app.com`
+Base URL: `https://api.adesexpress.com`
 
 ## Аутентификация
 - Авторизованные запросы: `Authorization: Bearer <accessToken>`
-- При логине/регистрации обязателен заголовок: `X-Client-Type: mobile`
+- При логине обязателен заголовок: `X-Client-Type: mobile`
 - Без cookies
 
 ## Формат ошибок
@@ -34,9 +34,11 @@ Base URL: `https://api.cargo-app.com`
   "firstName": "Айдар",
   "lastName": "Тестов",
   "phone": "+996777000000",
+  "dateOfBirth": "1995-06-15",
   "personalCode": "AN0001",
   "branch": Branch,
-  "status": 0,
+  "status": "ACTIVE | INACTIVE | DELETED | PENDING_DELETION",
+  "chatBanned": false,
   "createdAt": "ISO",
   "updatedAt": "ISO"
 }
@@ -104,10 +106,17 @@ Base URL: `https://api.cargo-app.com`
 ### POST /auth/register
 ```json
 // Request
-{ "phone": "+996777000000", "email": "user@example.com", "password": "StrongP@ssw0rd",
-  "firstName": "Айдар", "lastName": "Тестов", "branchId": "uuid" }
-// Response 201
-{ "accessToken": "jwt", "refreshToken": "jwt", "user": User }
+{
+  "login": "john_doe",
+  "firstName": "Айдар",
+  "lastName": "Тестов",
+  "email": "user@example.com",
+  "phone": "+996777000000",
+  "dateOfBirth": "1995-06-15",
+  "password": "StrongP@ssw0rd",
+  "branchId": "uuid"
+}
+// Response 201 (no body)
 // Errors: 400 VALIDATION_ERROR, 409 CONFLICT
 ```
 
@@ -115,10 +124,10 @@ Base URL: `https://api.cargo-app.com`
 Заголовок `X-Client-Type: mobile` обязателен.
 ```json
 // Request
-{ "login": "user@example.com", "password": "StrongP@ssw0rd" }
+{ "login": "john_doe", "password": "StrongP@ssw0rd" }
 // Response 200
 { "accessToken": "jwt", "refreshToken": "jwt", "user": User }
-// Errors: 400 VALIDATION_ERROR, 401 INVALID_CREDENTIALS, 403 FORBIDDEN
+// Errors: 400 VALIDATION_ERROR, 401 INVALID_CREDENTIALS, 403 EMAIL_NOT_CONFIRMED | FORBIDDEN
 ```
 
 ### POST /auth/refresh
@@ -126,7 +135,7 @@ Base URL: `https://api.cargo-app.com`
 // Request
 { "refreshToken": "jwt" }
 // Response 200
-{ "accessToken": "jwt", "refreshToken": "jwt", "user": User }
+{ "accessToken": "jwt", "refreshToken": "jwt" }
 // Errors: 400 VALIDATION_ERROR, 401 TOKEN_EXPIRED | INVALID_TOKEN
 ```
 
@@ -135,14 +144,13 @@ Base URL: `https://api.cargo-app.com`
 ```json
 // Request
 { "refreshToken": "current-refresh-token" }
-// Response 200
-{ "success": true }
+// Response 204 (no body)
 ```
 
 ### POST /auth/forgot-password/request
 ```json
 // Request
-{ "login": "user@example.com" }
+{ "login": "john_doe" }
 // Response 200
 { "success": true }
 ```
@@ -156,20 +164,19 @@ Base URL: `https://api.cargo-app.com`
 // Errors: 400 VALIDATION_ERROR | INVALID_CONFIRMATION_CODE
 ```
 
-### POST /auth/confirm-email
+### POST /auth/confirm
 ```json
 // Request
-{ "code": "123456" }
-// Response 200
-{ "success": true }
+{ "login": "john_doe", "code": "123456" }
+// Response 204 (no body)
+// Errors: 400 VALIDATION_ERROR | INVALID_CONFIRMATION_CODE
 ```
 
-### POST /auth/confirm-email/resend
-Без тела. Требует авторизации.
-Защита: не чаще раз в 60 сек, 3 попытки.
+### POST /auth/resend?login={login}
+Без тела. Авторизация не требуется.
+Защита: не чаще раз в 60 сек.
 ```json
-// Response 200
-{ "success": true }
+// Response 204 (no body)
 // Errors: 400 TOO_MANY_REQUESTS | RESEND_TOO_SOON
 ```
 
@@ -313,5 +320,5 @@ ws://api.adesexpress.com/ws/chat?token=<accessToken>
 ### GET /branches (без авторизации)
 ```json
 // Response 200
-{ "items": [Branch], "total": 5 }
+[Branch, Branch, ...]
 ```

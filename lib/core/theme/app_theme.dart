@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const primary = Color(0xFF43A047);
-  static const primaryDark = Color(0xFF2E7D32);
+  static const primary = Color(0xFF4CAF50);
+  static const primaryDark = Color(0xFF25593F);
   static const background = Color(0xFFF8F9FA);
   static const surface = Color(0xFFFFFFFF);
   static const textPrimary = Color(0xFF1C1C1E);
   static const textSecondary = Color(0xFF6B7280);
   static const error = Color(0xFFE53935);
+
+  // Градиент из splash screen (диагональный, top-left → bottom-right)
+  static const gradientColors = [
+    Color(0xFF004B3B),
+    Color(0xFF25593F),
+    Color(0xFF316967),
+  ];
+
+  static const backgroundGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: gradientColors,
+  );
+
+  static const backgroundDecoration = BoxDecoration(
+    gradient: backgroundGradient,
+  );
 
   static final light = ThemeData(
     useMaterial3: true,
@@ -26,7 +43,7 @@ class AppTheme {
       error: error,
       onError: Colors.white,
     ),
-    scaffoldBackgroundColor: background,
+    scaffoldBackgroundColor: const Color(0xFF004B3B),
     appBarTheme: const AppBarTheme(
       backgroundColor: surface,
       foregroundColor: textPrimary,

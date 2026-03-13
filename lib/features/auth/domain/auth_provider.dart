@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:cargo_mobile/core/api/auth_api.dart';
 import 'package:cargo_mobile/core/api/dio_client.dart';
 import 'package:cargo_mobile/core/storage/token_storage.dart';
@@ -32,43 +32,83 @@ final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier(ref.watch(authRepositoryProvider));
 });
 
+// --- AuthStatus enum ---
+
+enum AuthStatus {
+  /// Приложение только запустилось, проверяем сохранённый токен
+  initializing,
+
+  /// Пользователь авторизован
+  authenticated,
+
+  /// Пользователь не авторизован
+  unauthenticated,
+}
+
 // --- State ---
+// Хранит ТОЛЬКО статус сессии. isLoading и error — в каждом экране локально.
+// Аналогия из React: это как AuthContext — только user + статус, не форм-стейт.
 
 class AuthState {
   final User? user;
-  final bool isLoading;
-  final String? error;
+  final AuthStatus status;
 
   const AuthState({
     this.user,
-    this.isLoading = false,
-    this.error,
+    this.status = AuthStatus.unauthenticated,
   });
 
-  bool get isLoggedIn => user != null;
+  bool get isLoggedIn => status == AuthStatus.authenticated;
+  bool get isInitializing => status == AuthStatus.initializing;
 
-  AuthState copyWith({
-    User? user,
-    bool? isLoading,
-    String? error,
-    bool clearUser = false,
-    bool clearError = false,
-  }) {
+  AuthState copyWith({User? user, AuthStatus? status}) {
     return AuthState(
-      user: clearUser ? null : user ?? this.user,
-      isLoading: isLoading ?? this.isLoading,
-      error: clearError ? null : error ?? this.error,
+      user: user ?? this.user,
+      status: status ?? this.status,
     );
   }
 }
 
 // --- Notifier ---
+// Методы бросают исключения — экраны ловят их сами и управляют своим isLoading/error.
+// Это как useReducer: notifier меняет только глобальный auth-стейт, а
+// форм-логика остаётся внутри каждого StatefulWidget.
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _repository;
 
-  AuthNotifier(this._repository) : super(const AuthState());
+  AuthNotifier(this._repository)
+      : super(const AuthState(status: AuthStatus.initializing));
 
+  /// Вызывается при старте приложения. Проверяет сохранённый токен.
+  /// При успехе → authenticated, при неудаче → unauthenticated.
+  Future<void> tryRestoreSession() async {
+    try {
+      final user = await _repository.tryRestoreSession();
+      if (user != null) {
+        state = AuthState(user: user, status: AuthStatus.authenticated);
+      } else {
+        state = const AuthState(status: AuthStatus.unauthenticated);
+      }
+    } catch (_) {
+      state = const AuthState(status: AuthStatus.unauthenticated);
+    } finally {
+      // Убираем нативный сплэш — GoRouter уже знает куда вести
+      FlutterNativeSplash.remove();
+    }
+  }
+
+  /// Логин. Бросает исключение при ошибке — экран сам ловит и показывает error.
+  Future<void> login({
+    required String login,
+    required String password,
+  }) async {
+    final user = await _repository.login(login: login, password: password);
+    state = AuthState(user: user, status: AuthStatus.authenticated);
+  }
+
+  /// Регистрация. Бросает исключение при ошибке.
+  /// Стейт не меняем — пользователь ещё не авторизован, ждёт confirm email.
   Future<void> register({
     required String login,
     required String email,
@@ -79,89 +119,53 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String dateOfBirth,
     required String branchId,
   }) async {
-    state = state.copyWith(isLoading: true, clearError: true);
-    try {
-      await _repository.register(
-        login: login,
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-        phone: phone,
-        dateOfBirth: dateOfBirth,
-        branchId: branchId,
-      );
-      state = state.copyWith(isLoading: false);
-    } on DioException catch (e) {
-      state = state.copyWith(isLoading: false, error: _parseError(e));
-    }
+    await _repository.register(
+      login: login,
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+      phone: phone,
+      dateOfBirth: dateOfBirth,
+      branchId: branchId,
+    );
   }
 
-  Future<void> confirmEmailAndLogin({required String code}) async {
-    state = state.copyWith(isLoading: true, clearError: true);
-    try {
-      final user = await _repository.confirmEmailAndLogin(code: code);
-      state = state.copyWith(isLoading: false, user: user);
-    } on DioException catch (e) {
-      state = state.copyWith(isLoading: false, error: _parseError(e));
-    }
+  /// Подтверждение email + авто-логин. Бросает исключение при ошибке.
+  Future<void> confirmEmail({required String code}) async {
+    final user = await _repository.confirmEmailAndLogin(code: code);
+    state = AuthState(user: user, status: AuthStatus.authenticated);
   }
 
-  Future<void> login({
-    required String login,
-    required String password,
-  }) async {
-    state = state.copyWith(isLoading: true, clearError: true);
-    try {
-      final user = await _repository.login(login: login, password: password);
-      state = state.copyWith(isLoading: false, user: user);
-    } on DioException catch (e) {
-      state = state.copyWith(isLoading: false, error: _parseError(e));
-    }
+  /// Повторная отправка кода. Бросает исключение при ошибке.
+  Future<void> resendCode({required String login}) async {
+    await _repository.resendConfirmEmail(login: login);
   }
 
-  Future<void> logout() async {
-    state = state.copyWith(isLoading: true, clearError: true);
-    try {
-      await _repository.logout();
-      state = const AuthState();
-    } on DioException catch (e) {
-      state = state.copyWith(isLoading: false, error: _parseError(e));
-    }
-  }
-
+  /// Запрос кода сброса пароля. Бросает исключение при ошибке.
   Future<void> forgotPasswordRequest({required String login}) async {
-    state = state.copyWith(isLoading: true, clearError: true);
-    try {
-      await _repository.forgotPasswordRequest(login: login);
-      state = state.copyWith(isLoading: false);
-    } on DioException catch (e) {
-      state = state.copyWith(isLoading: false, error: _parseError(e));
-    }
+    await _repository.forgotPasswordRequest(login: login);
   }
 
+  /// Подтверждение нового пароля. Бросает исключение при ошибке.
   Future<void> forgotPasswordConfirm({
     required String code,
     required String newPassword,
   }) async {
-    state = state.copyWith(isLoading: true, clearError: true);
+    await _repository.forgotPasswordConfirm(code: code, newPassword: newPassword);
+  }
+
+  Future<void> logout() async {
     try {
-      await _repository.forgotPasswordConfirm(code: code, newPassword: newPassword);
-      state = state.copyWith(isLoading: false);
-    } on DioException catch (e) {
-      state = state.copyWith(isLoading: false, error: _parseError(e));
+      await _repository.logout();
+    } finally {
+      // Разлогиниваем локально даже если сервер не ответил
+      state = const AuthState(status: AuthStatus.unauthenticated);
     }
   }
 
-  void clearError() {
-    state = state.copyWith(clearError: true);
-  }
-
-  String _parseError(DioException e) {
-    final data = e.response?.data;
-    if (data is Map && data['message'] != null) {
-      return data['message'];
-    }
-    return 'Произошла ошибка. Попробуйте снова.';
+  /// Обновить данные пользователя в стейте (после редактирования профиля)
+  void updateUser(User user) {
+    state = state.copyWith(user: user, status: AuthStatus.authenticated);
   }
 }
