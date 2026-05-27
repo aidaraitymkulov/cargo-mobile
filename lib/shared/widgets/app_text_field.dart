@@ -10,6 +10,7 @@ class AppTextField extends StatefulWidget {
     required this.controller,
     this.obscure = false,
     this.suffix,
+    this.errorText,
   });
 
   final String label, hint;
@@ -17,6 +18,7 @@ class AppTextField extends StatefulWidget {
   final TextEditingController controller;
   final bool obscure;
   final Widget? suffix;
+  final String? errorText;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -27,19 +29,23 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final ac = Theme.of(context).extension<AppColors>()!;
-    final cs = Theme.of(context).colorScheme;
+    final ac       = Theme.of(context).extension<AppColors>()!;
+    final cs       = Theme.of(context).colorScheme;
+    final hasError = widget.errorText != null;
+
+    // Приоритет цвета границы: ошибка > фокус > обычный
+    final borderColor = hasError
+        ? const Color(0xFFEF4444)
+        : _focused
+            ? cs.primary
+            : ac.border;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           widget.label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: ac.sub,
-          ),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: ac.sub),
         ),
         const SizedBox(height: 6),
         AnimatedContainer(
@@ -48,19 +54,21 @@ class _AppTextFieldState extends State<AppTextField> {
           decoration: BoxDecoration(
             color: ac.inputBg,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: _focused ? cs.primary : ac.border,
-              width: 1.5,
-            ),
-            boxShadow: _focused
-                ? [
-                    BoxShadow(
-                      color: cs.primary.withValues(alpha: 0.13),
-                      blurRadius: 0,
-                      spreadRadius: 4,
-                    ),
-                  ]
-                : [],
+            border: Border.all(color: borderColor, width: 1.5),
+            boxShadow: [
+              if (_focused && !hasError)
+                BoxShadow(
+                  color: cs.primary.withValues(alpha: 0.13),
+                  blurRadius: 0,
+                  spreadRadius: 4,
+                ),
+              if (hasError)
+                BoxShadow(
+                  color: const Color(0xFFEF4444).withValues(alpha: 0.12),
+                  blurRadius: 0,
+                  spreadRadius: 4,
+                ),
+            ],
           ),
           child: Row(
             children: [
@@ -68,7 +76,11 @@ class _AppTextFieldState extends State<AppTextField> {
               Icon(
                 widget.icon,
                 size: 18,
-                color: _focused ? cs.primary : ac.hint,
+                color: hasError
+                    ? const Color(0xFFEF4444)
+                    : _focused
+                        ? cs.primary
+                        : ac.hint,
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -92,13 +104,22 @@ class _AppTextFieldState extends State<AppTextField> {
                   ),
                 ),
               ),
-              if (widget.suffix != null) ...[
-                widget.suffix!,
-                const SizedBox(width: 14),
-              ],
+              if (widget.suffix != null) ...[widget.suffix!, const SizedBox(width: 14)],
             ],
           ),
         ),
+        // Текст ошибки
+        if (hasError) ...[
+          const SizedBox(height: 5),
+          Text(
+            widget.errorText!,
+            style: const TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFFEF4444),
+            ),
+          ),
+        ],
       ],
     );
   }

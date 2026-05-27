@@ -1,8 +1,9 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 abstract class AppConstants {
-  static const String baseUrl = 'https://api.cargo-app.com';
-  static const String wsUrl = 'wss://api.cargo-app.com/ws/chat';
+  static String get baseUrl => dotenv.env['BASE_URL']!;
+  static String get wsUrl => dotenv.env['WS_URL']!;
 
   static const int defaultPageSize = 20;
   static const int chatPageSize = 50;
