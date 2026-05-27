@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cargo_mobile/features/auth/domain/auth_provider.dart';
 import 'package:cargo_mobile/features/auth/presentation/auth_screen.dart';
+import 'package:cargo_mobile/features/profile/presentation/profile_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final notifier = ref.read(routerNotifierProvider);
@@ -81,7 +82,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/profile',
-            builder: (_, __) => const Placeholder(),
+            builder: (_, __) => const ProfileScreen(),
           ),
         ],
       ),
