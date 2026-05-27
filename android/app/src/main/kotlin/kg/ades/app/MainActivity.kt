@@ -1,4 +1,4 @@
-package kg.ades.cargo_mobile
+package kg.ades.app
 
 import io.flutter.embedding.android.FlutterActivity
 

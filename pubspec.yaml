@@ -14,24 +14,27 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # Навигация
-  go_router: ^14.0.0
+  go_router: ^17.2.0
 
   # Стейт-менеджмент
-  flutter_riverpod: ^2.6.0
-  riverpod_annotation: ^2.6.0
+  flutter_riverpod: ^3.3.0
+  riverpod_annotation: ^4.0.0
 
   # HTTP
   dio: ^5.7.0
 
   # Безопасное хранилище токенов
-  flutter_secure_storage: ^9.2.0
+  flutter_secure_storage: ^10.3.0
 
   # WebSocket + STOMP (чат)
   stomp_dart_client: ^3.0.1
 
   # Push-уведомления
-  firebase_core: ^3.0.0
-  firebase_messaging: ^15.0.0
+  firebase_core: ^4.9.0
+  firebase_messaging: ^16.2.0
+
+  # Env
+  flutter_dotenv: ^5.2.1
 
   # Кэш картинок
   cached_network_image: ^3.4.0
@@ -40,14 +43,14 @@ dependencies:
   intl: ^0.20.0
 
   # Бесконечная прокрутка
-  infinite_scroll_pagination: ^4.0.0
+  infinite_scroll_pagination: ^5.1.0
 
   # Разрешения (уведомления, камера)
-  permission_handler: ^11.3.0
+  permission_handler: ^12.0.0
 
   # Immutable модели
-  freezed_annotation: ^2.4.0
-  json_annotation: ^4.9.0
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.12.0
 
 dev_dependencies:
   flutter_test:
@@ -56,10 +59,13 @@ dev_dependencies:
   flutter_lints: ^6.0.0
 
   # Кодогенерация
-  build_runner: ^2.4.0
-  json_serializable: ^6.8.0
-  riverpod_generator: ^2.6.0
-  freezed: ^2.5.0
+  build_runner: ^2.15.0
+  json_serializable: ^6.14.0
+  riverpod_generator: ^4.0.0
+  freezed: ^3.2.0
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
+    - .env
