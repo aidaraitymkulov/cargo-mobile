@@ -27,8 +27,8 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(path: '/auth/login',          builder: (_, __) => const AuthScreen()),
-      GoRoute(path: '/auth/register',        builder: (_, __) => const Placeholder()),
-      GoRoute(path: '/auth/confirm-email',   builder: (_, __) => const Placeholder()),
+      GoRoute(path: '/auth/register',        builder: (_, __) => const AuthScreen()),
+      GoRoute(path: '/auth/confirm-email',   builder: (_, __) => const AuthScreen()),
       GoRoute(path: '/auth/forgot-password', builder: (_, __) => const Placeholder()),
       StatefulShellRoute.indexedStack(
         builder: (_, __, shell) => MainShell(navigationShell: shell),

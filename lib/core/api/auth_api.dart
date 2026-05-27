@@ -20,4 +20,34 @@ class AuthApi {
       data: {'refreshToken': refreshToken},
     );
   }
+
+  Future<void> register({
+    required String login,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phone,
+    required String dateOfBirth,
+    required String password,
+    required String branchId,
+  }) async {
+    await _dio.post('/auth/register', data: {
+      'login': login,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'phone': phone,
+      'dateOfBirth': dateOfBirth,
+      'password': password,
+      'branchId': branchId,
+    });
+  }
+
+  Future<void> confirmEmail(String login, String code) async {
+    await _dio.post('/auth/confirm', data: {'login': login, 'code': code});
+  }
+
+  Future<void> resendCode(String login) async {
+    await _dio.post('/auth/resend', queryParameters: {'login': login});
+  }
 }

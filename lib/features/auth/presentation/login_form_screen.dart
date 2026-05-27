@@ -6,6 +6,7 @@ import 'package:cargo_mobile/core/theme/app_theme.dart';
 import 'package:cargo_mobile/features/auth/domain/auth_provider.dart';
 import 'package:cargo_mobile/shared/widgets/app_button.dart';
 import 'package:cargo_mobile/shared/widgets/app_text_field.dart';
+import 'package:cargo_mobile/shared/widgets/error_banner.dart';
 import 'package:cargo_mobile/shared/widgets/nav_button.dart';
 
 class LoginFormScreen extends ConsumerStatefulWidget {
@@ -202,38 +203,7 @@ class _LoginFormScreenState extends ConsumerState<LoginFormScreen> {
                 ),
                 if (_serverError != null) ...[
                   const SizedBox(height: 14),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEF4444).withValues(alpha: 0.10),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.3)),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFEF4444),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(Icons.close, size: 14, color: Colors.white),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _serverError!,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFFEF4444),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  AppErrorBanner(message: _serverError!),
                 ],
               ],
             ),

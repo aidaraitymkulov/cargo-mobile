@@ -5,8 +5,10 @@ import 'package:cargo_mobile/core/theme/app_theme.dart';
 import 'package:cargo_mobile/core/theme/theme_provider.dart';
 import 'package:cargo_mobile/features/auth/presentation/welcome_screen.dart';
 import 'package:cargo_mobile/features/auth/presentation/login_form_screen.dart';
+import 'package:cargo_mobile/features/auth/presentation/register_screen.dart';
+import 'package:cargo_mobile/features/auth/presentation/confirm_email_screen.dart';
 
-enum _Screen { welcome, login }
+enum _Screen { welcome, login, register, confirmEmail }
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -18,6 +20,7 @@ class AuthScreen extends ConsumerStatefulWidget {
 class _AuthScreenState extends ConsumerState<AuthScreen>
     with TickerProviderStateMixin {
   _Screen _screen = _Screen.welcome;
+  String  _pendingLogin = '';
 
   late final AnimationController _b1 =
       AnimationController(vsync: this, duration: const Duration(seconds: 12))
@@ -38,6 +41,41 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   }
 
   void _toggleTheme() => ref.read(themeModeProvider.notifier).toggle();
+
+  Widget _buildScreen() {
+    switch (_screen) {
+      case _Screen.welcome:
+        return WelcomeScreen(
+          key: const ValueKey('welcome'),
+          onLogin: () => setState(() => _screen = _Screen.login),
+          onRegister: () => setState(() => _screen = _Screen.register),
+          onToggleTheme: _toggleTheme,
+        );
+      case _Screen.login:
+        return LoginFormScreen(
+          key: const ValueKey('login'),
+          onBack: () => setState(() => _screen = _Screen.welcome),
+          onToggleTheme: _toggleTheme,
+        );
+      case _Screen.register:
+        return RegisterFormScreen(
+          key: const ValueKey('register'),
+          onBack: () => setState(() => _screen = _Screen.welcome),
+          onToggleTheme: _toggleTheme,
+          onSuccess: (login) {
+            _pendingLogin = login;
+            setState(() => _screen = _Screen.confirmEmail);
+          },
+        );
+      case _Screen.confirmEmail:
+        return ConfirmEmailScreen(
+          key: const ValueKey('confirmEmail'),
+          login: _pendingLogin,
+          onBack: () => setState(() => _screen = _Screen.register),
+          onSuccess: () => setState(() => _screen = _Screen.login),
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,18 +98,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                 child: child,
               ),
             ),
-            child: _screen == _Screen.welcome
-                ? WelcomeScreen(
-                    key: const ValueKey('welcome'),
-                    onLogin: () => setState(() => _screen = _Screen.login),
-                    onRegister: () {},
-                    onToggleTheme: _toggleTheme,
-                  )
-                : LoginFormScreen(
-                    key: const ValueKey('login'),
-                    onBack: () => setState(() => _screen = _Screen.welcome),
-                    onToggleTheme: _toggleTheme,
-                  ),
+            child: _buildScreen(),
           ),
         ],
       ),

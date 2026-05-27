@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cargo_mobile/core/theme/app_theme.dart';
 
 class AppTextField extends StatefulWidget {
@@ -11,6 +12,11 @@ class AppTextField extends StatefulWidget {
     this.obscure = false,
     this.suffix,
     this.errorText,
+    this.keyboardType,
+    this.textInputAction,
+    this.focusNode,
+    this.onSubmitted,
+    this.inputFormatters,
   });
 
   final String label, hint;
@@ -19,6 +25,11 @@ class AppTextField extends StatefulWidget {
   final bool obscure;
   final Widget? suffix;
   final String? errorText;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
+  final VoidCallback? onSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -89,6 +100,11 @@ class _AppTextFieldState extends State<AppTextField> {
                   child: TextField(
                     controller: widget.controller,
                     obscureText: widget.obscure,
+                    keyboardType: widget.keyboardType,
+                    textInputAction: widget.textInputAction,
+                    focusNode: widget.focusNode,
+                    onSubmitted: widget.onSubmitted != null ? (_) => widget.onSubmitted!() : null,
+                    inputFormatters: widget.inputFormatters,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,

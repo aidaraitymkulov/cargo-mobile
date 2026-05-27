@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cargo_mobile/core/api/auth_api.dart';
+import 'package:cargo_mobile/core/api/branch_api.dart';
 import 'package:cargo_mobile/core/api/dio_client.dart';
 import 'package:cargo_mobile/core/storage/token_storage.dart';
 import 'package:cargo_mobile/features/auth/data/auth_repository.dart';
+import 'package:cargo_mobile/models/branch.dart';
 
 // ─── Infrastructure providers ─────────────────────────────────
 final tokenStorageProvider = Provider<TokenStorage>((ref) {
@@ -24,6 +26,14 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
     ref.read(authApiProvider),
     ref.read(tokenStorageProvider),
   );
+});
+
+final branchApiProvider = Provider<BranchApi>((ref) {
+  return BranchApi(ref.read(dioClientProvider));
+});
+
+final branchesProvider = FutureProvider<List<Branch>>((ref) {
+  return ref.read(branchApiProvider).getBranches();
 });
 
 // ─── Auth state ────────────────────────────────────────────────
