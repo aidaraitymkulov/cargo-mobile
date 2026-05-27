@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cargo_mobile/features/auth/presentation/auth_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authNotifier = ref.watch(_authListenableProvider);
@@ -18,7 +19,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/auth/login',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const AuthScreen(),
       ),
       GoRoute(
         path: '/auth/register',
