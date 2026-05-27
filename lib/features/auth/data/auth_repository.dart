@@ -21,6 +21,18 @@ class AuthRepository {
     );
   }
 
+  Future<void> logout() async {
+    final refreshToken = await _storage.getRefreshToken();
+    if (refreshToken != null) {
+      try {
+        await _api.logout(refreshToken);
+      } catch (_) {
+        // Сервер недоступен — всё равно чистим локально
+      }
+    }
+    await _storage.clear();
+  }
+
   Future<bool> hasValidSession() async {
     try {
       return await _storage.getAccessToken() != null;

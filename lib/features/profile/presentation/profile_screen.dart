@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cargo_mobile/core/theme/app_theme.dart';
 import 'package:cargo_mobile/core/theme/theme_provider.dart';
+import 'package:cargo_mobile/features/auth/domain/auth_provider.dart';
 import 'package:cargo_mobile/shared/widgets/app_menu_group.dart';
+import 'package:cargo_mobile/shared/widgets/logout_sheet.dart';
 import 'package:cargo_mobile/shared/widgets/nav_button.dart';
 import 'package:cargo_mobile/shared/widgets/user_hero_card.dart';
 
@@ -109,13 +111,17 @@ class ProfileScreen extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      const AppMenuGroup(
+                      AppMenuGroup(
                         items: [
                           AppMenuItem(
                             icon: Icons.logout_rounded,
                             color: Color(0xFFEF4444),
                             label: 'Выйти с аккаунта',
                             danger: true,
+                            onTap: () => LogoutSheet.show(
+                              context,
+                              onConfirm: () => ref.read(authProvider.notifier).logout(),
+                            ),
                           ),
                         ],
                       ),

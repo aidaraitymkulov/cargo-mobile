@@ -37,6 +37,11 @@ class AuthNotifier extends AsyncNotifier<bool> {
     await ref.read(authRepositoryProvider).login(login, password);
     state = const AsyncData(true);
   }
+
+  Future<void> logout() async {
+    await ref.read(authRepositoryProvider).logout();
+    state = const AsyncData(false);
+  }
 }
 
 final authProvider = AsyncNotifierProvider<AuthNotifier, bool>(AuthNotifier.new);
