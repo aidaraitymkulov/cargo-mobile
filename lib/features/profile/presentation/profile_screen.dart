@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cargo_mobile/shared/widgets/app_header.dart';
 
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,15 +10,15 @@ class DashboardScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: Column(
         children: [
-          const AppHeader(label: 'Главная', title: 'Добро пожаловать'),
+          const AppHeader(label: 'Аккаунт', title: 'Профиль'),
           const Expanded(
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.home_outlined, size: 64, color: Colors.white24),
+                  Icon(Icons.person_outline, size: 64, color: Colors.white24),
                   SizedBox(height: 16),
-                  Text('Главная', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white38)),
+                  Text('Аккаунт', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white38)),
                 ],
               ),
             ),
