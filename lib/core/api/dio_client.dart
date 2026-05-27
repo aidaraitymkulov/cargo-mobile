@@ -22,6 +22,13 @@ class DioClient {
       onRequest: _onRequest,
       onError: _onError,
     ));
+    if (kDebugMode) {
+      _dio.interceptors.add(LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        logPrint: (o) => debugPrint(o.toString()),
+      ));
+    }
   }
 
   Dio get dio => _dio;

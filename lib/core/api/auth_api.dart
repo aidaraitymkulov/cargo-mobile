@@ -13,4 +13,11 @@ class AuthApi {
     );
     return response.data as Map<String, dynamic>;
   }
+
+  Future<void> logout(String refreshToken) async {
+    await _dio.post(
+      '/auth/logout',
+      data: {'refreshToken': refreshToken},
+    );
+  }
 }

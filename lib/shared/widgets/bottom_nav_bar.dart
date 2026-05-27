@@ -65,7 +65,7 @@ class AppBottomNavBar extends StatelessWidget {
                   NavBarItem(index: 1, currentIndex: currentIndex, icon: Icons.phone_outlined,       label: 'Связь',      onTap: onTap),
                   ChatIslandButton(index: 2, currentIndex: currentIndex, badge: chatBadge,           onTap: onTap),
                   NavBarItem(index: 3, currentIndex: currentIndex, icon: Icons.description_outlined, label: 'Инструкции', onTap: onTap),
-                  NavBarItem(index: 4, currentIndex: currentIndex, icon: Icons.person_outline,       label: 'Аккаунт',    onTap: onTap),
+                  NavBarItem(index: 4, currentIndex: currentIndex, icon: Icons.person_outline,       label: 'Профиль',    onTap: onTap),
                 ],
               ),
             ),

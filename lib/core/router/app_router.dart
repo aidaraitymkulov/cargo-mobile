@@ -18,7 +18,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       if (notifier.isLoading) return null;
 
-      final isLoggedIn  = notifier.isLoggedIn;
+      final isLoggedIn = notifier.isLoggedIn;
       final isAuthRoute = state.matchedLocation.startsWith('/auth');
 
       if (!isLoggedIn && !isAuthRoute) return '/auth/login';
@@ -33,19 +33,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       StatefulShellRoute.indexedStack(
         builder: (_, __, shell) => MainShell(navigationShell: shell),
         branches: [
-          // 0 — Главная
           StatefulShellBranch(routes: [
             GoRoute(path: '/', builder: (_, __) => const DashboardScreen()),
           ]),
-          // 1 — Связь
           StatefulShellBranch(routes: [
             GoRoute(path: '/calls', builder: (_, __) => const CallsScreen()),
           ]),
-          // 2 — Чат (центральная кнопка)
           StatefulShellBranch(routes: [
             GoRoute(path: '/chat', builder: (_, __) => const ChatScreen()),
           ]),
-          // 3 — Инструкции / Новости
           StatefulShellBranch(routes: [
             GoRoute(
               path: '/news',
@@ -53,12 +49,13 @@ final routerProvider = Provider<GoRouter>((ref) {
               routes: [
                 GoRoute(
                   path: ':id',
-                  builder: (_, state) => Placeholder(key: ValueKey(state.pathParameters['id'])),
+                  builder: (_, state) => Placeholder(
+                    key: ValueKey(state.pathParameters['id']),
+                  ),
                 ),
               ],
             ),
           ]),
-          // 4 — Аккаунт
           StatefulShellBranch(routes: [
             GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
           ]),
