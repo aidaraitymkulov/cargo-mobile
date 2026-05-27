@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cargo_mobile/features/auth/domain/auth_provider.dart';
+import 'package:cargo_mobile/features/auth/presentation/auth_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authNotifier = ref.watch(_authListenableProvider);
+  final notifier = ref.read(routerNotifierProvider);
 
   return GoRouter(
-    refreshListenable: authNotifier,
+    refreshListenable: notifier,
     redirect: (context, state) {
-      final isLoggedIn = authNotifier.isLoggedIn;
+      if (notifier.isLoading) return null;
+
+      final isLoggedIn  = notifier.isLoggedIn;
       final isAuthRoute = state.matchedLocation.startsWith('/auth');
 
       if (!isLoggedIn && !isAuthRoute) return '/auth/login';
@@ -18,30 +22,30 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/auth/login',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const AuthScreen(),
       ),
       GoRoute(
         path: '/auth/register',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const Placeholder(),
       ),
       GoRoute(
         path: '/auth/confirm-email',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const Placeholder(),
       ),
       GoRoute(
         path: '/auth/forgot-password',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const Placeholder(),
       ),
       ShellRoute(
-        builder: (_, _, child) => Scaffold(body: child),
+        builder: (_, __, child) => Scaffold(body: child),
         routes: [
           GoRoute(
             path: '/',
-            builder: (_, _) => const Placeholder(),
+            builder: (_, __) => const Placeholder(),
           ),
           GoRoute(
             path: '/products',
-            builder: (_, _) => const Placeholder(),
+            builder: (_, __) => const Placeholder(),
             routes: [
               GoRoute(
                 path: ':id',
@@ -53,7 +57,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/orders',
-            builder: (_, _) => const Placeholder(),
+            builder: (_, __) => const Placeholder(),
             routes: [
               GoRoute(
                 path: ':id',
@@ -65,7 +69,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/news',
-            builder: (_, _) => const Placeholder(),
+            builder: (_, __) => const Placeholder(),
             routes: [
               GoRoute(
                 path: ':id',
@@ -77,29 +81,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/profile',
-            builder: (_, _) => const Placeholder(),
+            builder: (_, __) => const Placeholder(),
           ),
         ],
       ),
       GoRoute(
         path: '/chat',
-        builder: (_, _) => const Placeholder(),
+        builder: (_, __) => const Placeholder(),
       ),
     ],
   );
 });
-
-final _authListenableProvider = Provider<_AuthListenable>((ref) {
-  return _AuthListenable();
-});
-
-class _AuthListenable extends ChangeNotifier {
-  bool _isLoggedIn = false;
-
-  bool get isLoggedIn => _isLoggedIn;
-
-  void setLoggedIn(bool value) {
-    _isLoggedIn = value;
-    notifyListeners();
-  }
-}
