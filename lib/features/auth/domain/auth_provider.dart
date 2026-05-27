@@ -50,6 +50,8 @@ class RouterNotifier extends ChangeNotifier {
 
   final Ref _ref;
 
+  bool get isLoading => _ref.read(authProvider).isLoading;
+
   bool get isLoggedIn => _ref.read(authProvider).maybeWhen(
         data: (v) => v,
         orElse: () => false,

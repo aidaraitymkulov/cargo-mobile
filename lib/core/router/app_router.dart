@@ -5,11 +5,13 @@ import 'package:cargo_mobile/features/auth/domain/auth_provider.dart';
 import 'package:cargo_mobile/features/auth/presentation/auth_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final notifier = ref.watch(routerNotifierProvider);
+  final notifier = ref.read(routerNotifierProvider);
 
   return GoRouter(
     refreshListenable: notifier,
     redirect: (context, state) {
+      if (notifier.isLoading) return null;
+
       final isLoggedIn  = notifier.isLoggedIn;
       final isAuthRoute = state.matchedLocation.startsWith('/auth');
 

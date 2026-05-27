@@ -61,7 +61,7 @@ class _LoginFormScreenState extends ConsumerState<LoginFormScreen> {
     return _loginError == null && _passError == null;
   }
 
-  void _submit() async {
+  Future<void> _submit() async {
     if (!_validate()) return;
     setState(() { _loading = true; _serverError = null; });
     try {
@@ -71,8 +71,11 @@ class _LoginFormScreenState extends ConsumerState<LoginFormScreen> {
       );
       // GoRouter сам редиректнет на '/' после смены authProvider
     } on DioException catch (e) {
-      final message = e.response?.data?['message'] as String?;
+      final data = e.response?.data;
+      final message = data is Map ? data['message'] as String? : null;
       setState(() => _serverError = message ?? 'Ошибка входа. Попробуйте снова.');
+    } catch (e) {
+      setState(() => _serverError = 'Произошла непредвиденная ошибка. Попробуйте позже.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
